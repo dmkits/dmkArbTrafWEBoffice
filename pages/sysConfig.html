@@ -1,0 +1,67 @@
+<table width="100%" height="100%" style="position:static;top:0;">
+    <tr>
+        <td width="500px">
+            <table width="500px" height="100%" style="position: static;top:0;">
+                <tr height="30px">
+                    <th width="150px" style="text-align:left;"><span style="margin-left:20px"><b>system configuration:</b></span>
+                        <span id="sa_sysConfig_configState">default</span>
+                    </th>
+                </tr>
+                <tr height="25px">
+                    <td><textBox id="sa_sysConfig_appConfigName" label="app configName:" labelstyle="width:100px;text-align:right" style="width:100px;margin-left:5px;"></textBox></td>
+                </tr>
+                <tr height="40px">
+                    <td>
+                        <button id="sa_sysConfig_btnLoadConfig">Load config</button>
+                        <button id="sa_sysConfig_btnSaveConfigAndRevalidate">Store config & revalidate modules</button>
+                    </td>
+                </tr>
+                <tr></tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<script type="text/javascript">
+    var getSysConfig = function(){
+        $$.request.getJSONData({url:"/sysadmin/sysConfig/getSysConfig",consoleLog: true},function(result,error){
+            if(error){
+                $$.sa_sysConfig_configState.innerHTML = "<div><b style='color:red'>"+error.message+"</b></div>";
+                return;
+            }
+            $$.sa_sysConfig_configState.innerHTML = "<div><b>Configuration loaded.</b></div>";
+            setSysConfigContent(result);
+        })
+    };
+    function setSysConfigContent(sysConfigData) {
+        $$.sa_sysConfig_appConfigName.set("value",sysConfigData["configName"]);
+    }
+    getSysConfig();
+    $$.sa_sysConfig_btnLoadConfig.onClick=function(){
+        $$.sa_sysConfig_configState.innerHTML = "<div><b>Loading configuration parameters...</b></div>";
+        $$.request.getJSONData({url: "/sysadmin/sysConfig/loadSysConfig", consoleLog: true},function(result,error){
+            if(error){
+                $$.sa_sysConfig_configState.innerHTML = "<div><b style='color:red'>"+error.message+"</b></div>";
+                return;
+            }
+            $$.sa_sysConfig_configState.innerHTML = "<div><b>Configuration reloaded.</b></div>";
+            setSysConfigContent(result);
+            if($$.$parent.getParent().updateSysState)  $$.$parent.getParent().updateSysState();
+        });
+    };
+    $$.sa_sysConfig_btnSaveConfigAndRevalidate.onClick=function(){
+        $$.sa_sysConfig_configState.innerHTML = "<div><b>Configuration saving and modules revalidating...</b></div>";
+        var newSysConfig={
+            "configName":$$.sa_sysConfig_appConfigName.get('value')
+        };
+        $$.request.postJSONData({url:"/sysadmin/sysConfig/storeSysConfig",data:newSysConfig,consoleLog:true},
+                function(result,error){
+                    if(error){
+                        $$.sa_sysConfig_configState.innerHTML = "<span><b style='color:red'>"+error.message+"</b></span>";
+                        $$.$parent.getParent().updateSysState();
+                        return;
+                    }
+                    $$.sa_sysConfig_configState.innerHTML = "<span><b>"+result.message+"</b></span>";
+                    $$.$parent.getParent().updateSysState();
+                });
+    };
+</script>

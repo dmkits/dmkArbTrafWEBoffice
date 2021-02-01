@@ -1,0 +1,40 @@
+{
+  "title":"Абсолют WEB-оффис","icon32x32":"icons/abswebof-ico-64.png","imageSmall":"imgs/abswebof-logo-108x54.png","imageMain":"imgs/abswebof-imageMain-664x373.png",
+  "modules":["sysadmin","system","main",
+    "docxTemplates",
+    "doc_xlsClients",
+    "dir_xlsBusinessCardsRegions","dir_xlsBusinessCardsCities","dir_xlsBusinessCardsIndustries","doc_xlsBusinessCards"
+  ],
+  "menuItems":[
+    { "menuItemName":"menuBarItemDocXlsBusinessCards", "menuTitle":"База Визитки", "pageTitle":"База Визитки", "module":"doc_xlsBusinessCards", "closable":true, "pageImageSmall":"imgs/abswebof-logo-excel-86x48.png" },
+    { "menuItemName":"menuBarItemDocXlsClients", "menuTitle":"База клиентов", "pageTitle":"База клиентов", "module":"doc_xlsClients", "closable":true, "pageImageSmall":"imgs/abswebof-logo-excel-86x48.png" },
+    { "menuItemName":"menuBarItemDocDocxTemplatesMenu", "menuTitle":"Шаблоны документов Word", "pageTitle":"Шаблоны документов Word", "module":"docxTemplates", "closable":false, "pageImageSmall":"imgs/abswebof-logo-word-86x48.png" },
+    { "menuItemName":"menuBarItemDirsMenu", "menuTitle":"Справочники", "pageTitle":"Справочники",
+      "popupMenu":[
+        { "menuItemName":"menuBarItemDirXlsBusinessCardsRegions", "menuTitle":"Справочник областей", "pageTitle":"Справочник областей", "module":"dir_xlsBusinessCardsRegions", "closable":true },
+        { "menuItemName":"menuBarItemDirXlsBusinessCardsCities", "menuTitle":"Справочник городов", "pageTitle":"Справочник городов", "module":"dir_xlsBusinessCardsCities", "closable":true },
+        { "menuItemName":"menuBarItemDirXlsBusinessCardsIndustries", "menuTitle":"Справочник отраслей", "pageTitle":"Справочник отраслей", "module":"dir_xlsBusinessCardsIndustries", "closable":true }
+      ]
+    },
+    { "menuItemName":"menuBarItemHelpAbout", "menuTitle":"О программе", "action":"help_about" },
+    { "menuItemName":"menuBarItemClose", "menuTitle":"Выход", "action":"close" }
+  ],
+  "configDocxTemplates":"configDocxTemplates",
+  "usersRoles":{
+    "docx":{
+      "menu":["menuBarItemDocDocxTemplatesMenu","menuBarItemHelpAbout","menuBarItemClose"]
+    },
+    "xls":{
+      "menu":["menuBarItemDocXlsBusinessCards","menuBarItemDocXlsClients",
+        "menuBarItemDirsMenu","menuBarItemDirXlsBusinessCardsRegions","menuBarItemDirXlsBusinessCardsCities","menuBarItemDirXlsBusinessCardsIndustries",
+        "menuBarItemHelpAbout","menuBarItemClose"
+      ],
+      "autorun":["menuBarItemDocXlsBusinessCards"]
+    }
+  },
+  "users":{
+    "asa":{ "name":"Сисадмин", "pswrd":"sysADM123", "sysadmin":true, "userRole":"sysadmin", "autorun":["menuBarItemDocXlsClientsMenu","menuBarItemDocXlsBusinessCards"] },
+    "docx":{ "name":"Пользователь шаблоны документов Word", "pswrd":"docx", "userRole":"docx" },
+    "xls":{ "name":"Пользователь база Excel", "pswrd":"xls", "userRole":"xls" }
+  }
+}

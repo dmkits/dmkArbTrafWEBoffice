@@ -1,0 +1,43 @@
+<LayoutContainer id="xlsClients_PageContainer" style="width:100%;height:100%;margin:0px;padding:0;">
+    <TDocSimpleTableEdt id="xlsClients_TDocXlsClients" region="center" style="margin:0;padding:0;"></TDocSimpleTableEdt>
+</LayoutContainer>
+<script type="text/javascript">                                                                             //log("sysadmin logins $$",$$);//!!!IT'S FOR TESTING!!!
+    $$.xlsClients_TDocXlsClients
+            .init({titleText: "База клиентов", parentPage:this.$parent, buttonPrint:false,
+                manualColumnResize:true, manualColumnMove:true, rightPane:{width:300},
+                dataURL:'/docXlsClients/getXlsClientsDataForTable',
+                dataStoreURL:"/docXlsClients/storeXlsClientsTableData", dataDeleteURL:"/docXlsClients/delXlsClientsTableData"
+            })
+            .addTotalCountNumberBox("ИТОГО строк:", 140, {style:"font-weight:bold;",inputStyle:"width:40px;"})
+            .addToolPane({title:"Информация",
+                contentTableAction:function(params){
+                    var info="";
+                    if(params.contentHTableSelectedRow){
+                        info="<b>№ п/п</b>: "+params.contentHTableSelectedRow["PosNum"]
+                                +"<br><b>Источник данных</b>: "+params.contentHTableSelectedRow["DataSource"]
+                                +"<br><b>Сфера деятельности</b>: "+params.contentHTableSelectedRow["Scope"]
+                                +"<br><b>Компания</b>: "+params.contentHTableSelectedRow["Company"]
+                                +"<br><b>Сайт</b>: "+params.contentHTableSelectedRow["Site"]
+                                +"<br><b>Профиль в социальной сети</b>: "+params.contentHTableSelectedRow["Profile"]
+                                +"<br><b>Ссылка на профиль</b>: "+params.contentHTableSelectedRow["ProfileLink"]
+                                +"<br><b>Телефон</b>: "+params.contentHTableSelectedRow["Telephone"]
+                                +"<br><b>E-mail</b>: "+params.contentHTableSelectedRow["Email"]
+                                +"<br><b>Контактное лицо</b>: "+params.contentHTableSelectedRow["Contact"]
+                                +"<br><b>Должность</b>: "+(params.contentHTableSelectedRow["Profile2"]||"")
+                                +"<br><b>Профиль в социальной сети 2</b>: "+(params.contentHTableSelectedRow["SumT5p"]||"")
+                                +"<br><b>Ссылка на профиль 2</b>: "+(params.contentHTableSelectedRow["ProfileLink2"]||"")
+                    }
+                    params.thisToolPane.set("content",info);
+                }
+            })
+            .addToolPaneWHTableActionBtns({title:"Действия",
+                buttons:{insertTableRow:"Добавить строку", allowEditTableSelectedRow:"Изменить строку",
+                    storeTableSelectedRow:"Сохранить строку", deleteTableSelectedRow:"Удалить строку"}})
+            .addContentTablePopupMenuTableRowsAction("Добавить строки",{actionName:"insertTableRowsAfterSelected"})
+            .addContentTablePopupMenuTableRowsAction("Изменить строки",{actionName:"allowEditTableSelectedRows"})
+            .addContentTablePopupMenuTableRowsAction("Сохранить строки",{actionName:"storeTableSelectedRows"})
+            .addContentTableOnChangeRowAction(function(crd/*changedRowData*/, contentTable, params, nextCallback){
+                nextCallback();
+            })
+            .startupDoc();
+</script>

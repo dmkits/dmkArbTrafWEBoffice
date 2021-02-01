@@ -1,0 +1,40 @@
+<LayoutContainer id="xlsBusinessCardsIndustries_PageContainer" style="width:100%;height:100%;margin:0px;padding:0;">
+    <StackContainer id="xlsBusinessCardsIndustries_ContentContainer" region="center" tabPosition="top" style="width:100%;height:100%; margin:5px;padding:0;">
+        <TDocSimpleTableEdt id="xlsBusinessCardsIndustries_TDocXlsBusinessCardsIndustries" style="margin:0;padding:0;"></TDocSimpleTableEdt>
+    </StackContainer>
+</LayoutContainer>
+<script type="text/javascript">
+    $$.xlsBusinessCardsIndustries_TDocXlsBusinessCardsIndustries
+            .init({titleText: "Справочник отраслей", dataURL:'/dirXlsBusinessCardsIndustries/getXlsBusinessCardsIndustriesDataForTable', buttonPrint:false,
+                manualColumnResize:true, manualColumnMove:true, rightPane:{width:300},
+                dataStoreURL:"/dirXlsBusinessCardsIndustries/storeXlsBusinessCardsIndustriesTableData", dataDeleteURL:"/dirXlsBusinessCardsIndustries/delXlsBusinessCardsIndustriesTableData"
+            })
+            .addTotalCountNumberBox("ИТОГО строк:", 140, {style:"font-weight:bold;",inputStyle:"width:40px;"})
+            .addActionOnUpdateTableContent(function(paramsUpdateTableContent,htContent,htColumns,doc){
+                if(!doc.contentHTableColumnsItems&&htColumns)
+                    doc.contentHTableColumnsItems= htColumns.reduce(function(res,cur,i){ res[cur.data]= cur; return res; }, {});
+            })
+            .addToolPane({title:"Информация",
+                contentTableAction:function(params){
+                    var info="";
+                    if(!params.contentHTableSelectedRow||!params.thisDoc.contentHTableColumnsItems){ params.thisToolPane.set("content",info); return; }
+                    for(var dataID in params.contentHTableSelectedRow){
+                        if(dataID=="ChID") continue;
+                        var colData= params.thisDoc.contentHTableColumnsItems[dataID];
+                        if(!colData||!colData.name) continue;
+                        info+= ((info!="")?"<br>":"")+"<b>"+colData.name+"</b>: "+params.contentHTableSelectedRow[dataID];
+                    }
+                    params.thisToolPane.set("content",info);
+                }
+            })
+            .addToolPaneWHTableActionBtns({title:"Действия",
+                buttons:{insertTableRow:"Добавить строку", allowEditTableSelectedRow:"Изменить строку",
+                    storeTableSelectedRow:"Сохранить строку", deleteTableSelectedRow:"Удалить строку"}})
+            .addContentTablePopupMenuTableRowsAction("Добавить строки",{actionName:"insertTableRowsAfterSelected"})
+            .addContentTablePopupMenuTableRowsAction("Изменить строки",{actionName:"allowEditTableSelectedRows"})
+            .addContentTablePopupMenuTableRowsAction("Сохранить строки",{actionName:"storeTableSelectedRows"});
+    $$.xlsBusinessCardsIndustries_TDocXlsBusinessCardsIndustries.onShow= function(){
+        if(!$$.xlsBusinessCardsIndustries_TDocXlsBusinessCardsIndustries.startedUp)$$.xlsBusinessCardsIndustries_TDocXlsBusinessCardsIndustries.startupDoc();
+    };
+    $$.xlsBusinessCardsIndustries_TDocXlsBusinessCardsIndustries.onShow();
+</script>

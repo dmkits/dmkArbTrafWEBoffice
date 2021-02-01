@@ -1,0 +1,197 @@
+<BorderContainer id="docxTemplates_PageContainer" style="width:100%;height:100%;">
+    <ContentPane id="docxTemplates_ContentPaneDetailContainer" region="center" style="width:100%;height:100%; margin:0;padding:0;">
+        <table id="docxTemplatesParameters" class="docxTemplateParameters" width="100%" style="white-space:nowrap">
+            <tr>
+                <th id="docxTemplatesParametersImageLogo" style="width:100px"></th>
+                <th style="width:200px"></th>
+                <th style="min-width:20px"><b>№ параметра</b></th>
+                <th height="30px" style="min-width:50px"><b>Название параметра</b></th>
+                <th height="30px" style="min-width:50px"><b>Значение параметра</b></th>
+                <th style="width:600px"></th>
+            </tr>
+        </table>
+    </ContentPane>
+    <LayoutContainer id="docxTemplates_ContentPaneParamsHistory" region="bottom" splitter="true" style="width:100%;height:250px; margin:0;padding:0;">
+        <ContentPane id="docxTemplates_TableParamsHistoryHeader" region="top" style="width:100%;height:auto; margin:0;padding:0;">
+            <table width="100%" height="100%" class="docxTemplateParameters" style="margin:0;padding:0;">
+                <tr height="25px"><th>Сохраненные параметры</th></tr>
+            </table>
+        </ContentPane>
+        <HTableSimpleFiltered id="docxTemplates_TableParamsHistory" region="center" wordWrap="true" readOnly="true" useFilters="true" allowFillHandle="false" style="margin:0;padding:0"></HTableSimpleFiltered>
+    </LayoutContainer>
+</BorderContainer>
+<script type="text/javascript">
+    var pageID="docxTemplates_", textBoxes={}, filesForGenerateTemplates=null;
+    var setTemplateContent = function(){
+        $$.request.getJSONData({url:"/docxTemplates/"+pageID+"/getTemplateData", consoleLog:true},
+                function(result){
+                    if(result===undefined||result==null) result=[];
+                    if(!result.fields) return;
+                    filesForGenerateTemplates= result.files;
+                    createTemplateValuesContent(result.fields);
+                    loadParamsHistory();
+                });
+    };
+    var createTemplateValuesContent = function(templateFields){
+        if($$.$parent&&$$.$parent.pageImageSmall&&$$.docxTemplatesParametersImageLogo){
+            $$.docxTemplatesParametersImageLogo.style["display"]="";
+            $$.docxTemplatesParametersImageLogo.style["width"]="100px"; $$.docxTemplatesParametersImageLogo.style["height"]="40px";
+            $$.docxTemplatesParametersImageLogo.style["background-repeat"]="no-repeat"; $$.docxTemplatesParametersImageLogo.style["background-position-x"]="center";
+            $$.docxTemplatesParametersImageLogo.style["background-image"]="url(\""+$$.$parent.pageImageSmall+"\")";
+        }else{
+            $$.docxTemplatesParametersImageLogo.style["background-image"]="";
+        }
+        var tr,td,div, label;
+        var tableBody= $$.docxTemplatesParameters.firstElementChild;
+        for(var tfID in templateFields){
+            var tTitle= templateFields[tfID];
+            tableBody.appendChild(tr=document.createElement("tr"));
+            tr.appendChild(td=document.createElement("td"));//empty1
+            tr.appendChild(td=document.createElement("td"));//empty2
+            tr.appendChild(td=document.createElement("td"));td.setAttribute("style","text-align:right");
+            td.appendChild(label=document.createElement("label")); label.setAttribute("for",pageID+tfID); label.innerHTML=tfID;
+            tr.appendChild(td=document.createElement("td"));td.setAttribute("style","text-align:right");
+            td.appendChild(label=document.createElement("label")); label.setAttribute("for",pageID+tfID); label.innerHTML=tTitle;
+            tr.appendChild(td=document.createElement("td"));
+            $$.$.addWigetTo(td,"TextBox",{id:pageID+tfID,style:"width:450px;"},function(textBox){ textBoxes[tfID]= textBox; });
+            tr.appendChild(td=document.createElement("td"));
+        }
+        tableBody.appendChild(tr=document.createElement("tr"));
+        tr.appendChild(document.createElement("td"));//empty1
+        tr.appendChild(document.createElement("td"));//empty2
+        tr.appendChild(document.createElement("td"));
+        tr.appendChild(document.createElement("td"));
+        tr.appendChild(td=document.createElement("td"));
+        td.appendChild(div=document.createElement("div"));
+        $$.$.addWigetTo(div,"Button",{id:pageID+"btnSendDataAndGenDocx",label:"Сгенерировать документы",style:"width:300px;", onClick:doGenerateTemplates});
+    };
+    var loadParamsHistory= function(){
+        $$.docxTemplates_TableParamsHistory.setContentFromUrl({url:"/docxTemplates/"+pageID+"/getTemplateParamsHistory",condition:null});
+    };
+    $$.docxTemplates_TableParamsHistory.onUpdateContent= function(p){ $$.docxTemplates_TableParamsHistory.setSelectedRowByIndex(0); };
+    $$.docxTemplates_TableParamsHistory.onSelect = function(firstSelectedRowData,selection){
+        this.setSelection(firstSelectedRowData,selection);
+        if(!firstSelectedRowData) return;
+        for(var tfID in firstSelectedRowData){
+            var textBox= textBoxes[tfID];
+            if(!textBox) continue;
+            textBox.set('value',firstSelectedRowData[tfID]);
+        }
+    };
+    var dialogGenTemplates=null, dialogGenTemplatesTextResultID= "DialogSimpleTextBox_text_result";
+    var doGenerateTemplates= function(){                                                                        //console.log("doGenerateTemplates filesForGenerateTemplates=",filesForGenerateTemplates);
+        if(!filesForGenerateTemplates||filesForGenerateTemplates.length==0){
+            $$.dialogs.showSimpleDialog({title:"Внимание",
+                content:"Нет списка шаблонов для генерации!<br>Выполнение генерации невозможно.",btnOkLabel:"Закрыть"});
+            return;
+        }
+        if(!dialogGenTemplates){
+            dialogGenTemplates= $$.dialogs.showSimpleDialog({id:pageID+"_dialogGenerateTemplates",
+                title:"Генерация документов по шаблонам",style:"min-width:350px;font-size:12px;",
+                btnOkLabel:"Генерировать выбранные",btnStopLabel:"Закрыть",
+                addButtons:{btnCheckAll:{label:"Выбрать все",positionBefore:"btnOK",onClick:function(dlgInstance){ dlgInstance.checkAllFiles(); }},
+                    btnGenAllFiles:{label:"Генерировать все",positionBefore:"btnStop",onClick:function(dlgInstance){ dlgInstance.checkAllFiles(); dlgInstance.genCheckedFiles(); }},
+                    btnClose:{label:"Закрыть",onClick:function(dlgInstance){ dlgInstance.hide(); }}},
+                progressMaximum:0, onlyCreate:true
+            });
+            var dlgTable= document.createElement("table"); dlgTable.width="100%";
+            dialogGenTemplates.set("content",dlgTable);
+            var dialogContent=[
+                {type:"text",style:"font-weight:bold;font-size:14;text-align:center",value:"Выберите шаблоны для генерации документов:"},
+//              {id:"textbox1", type:"textbox",label:"шаблон1",width:100,value:"123"},
+//              {id:"checkbox1", type:"checkbox",label:"шаблон123 sdfds;lf, sdflksdkl;f sdfkldsklfj",width:250,value:"1"}
+            ];
+            for(var fileName of filesForGenerateTemplates)
+                dialogContent.push({type:"checkbox",label:fileName,value:fileName,checked:false, style:"text-align:center"});
+            dialogContent.push({id:dialogGenTemplatesTextResultID,type:"text",style:"font-weight:bold;font-size:16;text-align:center",value:""});
+            for(var item in dialogContent){
+                var dialogContentItem= dialogContent[item],
+                        dlgContentType= dialogContentItem.type, dlgContentLabel= dialogContentItem.label, dlgContentStyle= dialogContentItem.style,
+                        contentItemValue= dialogContentItem.value,
+                        dlgTableTR,dlgTableTD,dlgСontentTag;
+                dlgTable.appendChild(dlgTableTR=document.createElement("tr")); dlgTableTR.appendChild(dlgTableTD=document.createElement("td"));
+                if(dlgContentStyle) dlgTableTD.style= dlgContentStyle;
+                var contentElemID= dialogContentItem.id||"DialogSimpleTextBox_"+dlgContentType+item;
+                dialogContentItem.name= contentElemID;
+                if(dlgContentType=="text"){
+                    dlgTableTD.appendChild(dlgСontentTag=document.createElement("span"));
+                    dlgTableTD.setAttribute("colspan","2"); dlgСontentTag.innerText= dialogContentItem.value;
+                    if(dialogContentItem.id) dialogGenTemplates[dialogContentItem.id]= dlgСontentTag;
+                }else if(dlgContentLabel&&(dlgContentType=="textbox"||dlgContentType=="checkbox")){
+                    dlgTableTD.appendChild(dlgСontentTag=document.createElement("label"));
+                    dlgСontentTag.setAttribute("for",pageID+contentElemID); dlgСontentTag.innerText= dlgContentLabel;
+                    dialogContentItem.labelTag= dlgСontentTag;
+                }
+                if(dlgContentType=="text")continue;
+                dlgTableTR.appendChild(dlgTableTD=document.createElement("td"));
+                if(dlgContentType=="textbox"){
+                    $$.$.addWigetTo(dlgTableTD,"TextBox",{id:pageID+contentElemID,type:"text"},function(dialogTextbox){
+                        if(contentItemValue) dialogTextbox.set("value",contentItemValue);
+                        if(dialogContentItem.disabled) dialogTextbox.set("disabled",true); else dialogTextbox.set("disabled",false);
+                        var width= dialogContentItem.width;
+                        if(width) dialogTextbox.set("style","width:"+width+"px;");
+                        dialogContentItem.textbox= dialogTextbox;
+                    });
+                }else if(dlgContentType=="checkbox"){
+                    $$.$.addWigetTo(dlgTableTD,"CheckBox",{id:pageID+contentElemID,checked:false},function(dialogCheckbox){
+                        if(contentItemValue) dialogCheckbox.set("value",contentItemValue);
+                        if(dialogContentItem.checked) dialogCheckbox.set("checked",true); else dialogCheckbox.set("checked",false);
+                        dialogCheckbox.labelTag= dialogContentItem.labelTag;
+                        if(dialogCheckbox.labelTag)
+                            dialogCheckbox.onChange= function(checked){
+                                if(checked&&this.labelTag){
+                                    this.labelTag.style["font-weight"]="bold"; this.labelTag.style["text-decoration"]= "underline";
+                                }else if(this.labelTag){
+                                    this.labelTag.style["font-weight"]="inherit"; this.labelTag.style["text-decoration"]= "inherit";
+                                }
+                            };
+                        dialogContentItem.checkbox= dialogCheckbox;
+                    });
+                }
+            }
+            dialogGenTemplates.checkAllFiles= function(){
+                for(var dlgCItem of dialogContent)
+                    if(dlgCItem.checkbox&&!dlgCItem.checkbox.checked){ dlgCItem.checkbox.set("checked",true); dlgCItem.checkbox.onChange(true); }
+            };
+            dialogGenTemplates.btnOK.onClick= function(){ dialogGenTemplates.genCheckedFiles(); };
+            dialogGenTemplates.genCheckedFiles= function(){
+                var dialogGenTemplatesTextElemResult= dialogGenTemplates[dialogGenTemplatesTextResultID];
+                dialogGenTemplatesTextElemResult.style.color= "inherit";
+                dialogGenTemplates[dialogGenTemplatesTextResultID].innerHTML= "НАЧАТА ГЕНЕРАЦИЯ ФАЙЛОВ ПО ШАБЛОНАМ...";
+                var filesForGenerateTemplatesChecked=[];
+                for(var dlgCItem of dialogContent)
+                    if(dlgCItem.checkbox&&dlgCItem.checkbox.checked){ filesForGenerateTemplatesChecked.push(dlgCItem.checkbox.value); }
+                generateDocxFilesByTemplates(filesForGenerateTemplatesChecked,function(result){
+                    if(result.error){
+                        dialogGenTemplatesTextElemResult.style.color= "red";
+                        dialogGenTemplatesTextElemResult.innerHTML= result.error.userMessage||result.error.message||result.error.error;
+                        return;
+                    }
+                    var genResult= (result)?result.result:null;
+                    if(!genResult){
+                        dialogGenTemplatesTextElemResult.style.color= "red";
+                        genResult= "Результат операции неизвестен.";
+                    }
+                    dialogGenTemplates[dialogGenTemplatesTextResultID].innerHTML= genResult;
+                    if(result.storeHistoryResult){
+                        dialogGenTemplates[dialogGenTemplatesTextResultID].innerHTML+= "<br>"+result.storeHistoryResult;
+                        loadParamsHistory();
+                    }
+                });
+            };
+        }
+        dialogGenTemplates.show();
+    };
+    var generateDocxFilesByTemplates= function(files,callback){
+        var sendingData={};
+        for(var tID in textBoxes) sendingData[tID]= textBoxes[tID].get("value");
+        $$.request.postJSONData({url:"/docxTemplates/"+pageID+"/sendDataAndGenDocx", data:{values:JSON.stringify(sendingData),files:files}, consoleLog:true},
+                function(result,err){
+                    if(err){ if(callback) callback({error:err}); return; }
+                    var userMsg= (result)?result.userMsg:null;
+                    if(!userMsg) userMsg="НЕИЗВЕСТНО.";
+                    if(callback) callback({result:userMsg,storeHistoryResult:(result)?result.storeHistoryResult:null});
+                });
+    };
+    setTemplateContent();
+</script>
