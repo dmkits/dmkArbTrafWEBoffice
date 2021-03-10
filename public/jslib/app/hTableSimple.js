@@ -155,10 +155,11 @@ define(["dojo/_base/declare", "dijit/layout/ContentPane","dojox/widget/Standby",
                     manualColumnMove: parent.manualColumnMove,
                     persistentState: parent.persistentState,
                     readOnly: parent.readOnly!==false,
-                    wordWrap: parent.wordWrap, trimWhitespace:false,
+                    wordWrap: parent.wordWrap, //trimWhitespace:false,
                     enterMoves:{row:0,col:1}, tabMoves:{row:0,col:1},
                     multiSelect: true,
                     cellValueRenderer:function (instance, td, row, col, prop, value, cellProperties){           //console.log("cellValueRenderer",instance, td, row, col, prop, value, cellProperties);
+                        //cellProperties["wordWrap"]= true;
                         if(cellProperties["html"]){
                             Handsontable.renderers.HtmlRenderer.apply(this, arguments);
                         }else{
@@ -167,7 +168,7 @@ define(["dojo/_base/declare", "dijit/layout/ContentPane","dojox/widget/Standby",
                                 if(value!==null&&value!==undefined){
                                     var datetimeFormat= cellProperties["datetimeFormat"];//value,"YYYY-MM-DD" or "YYYY-MM-DD HH:mm:ss"
                                     if(typeof(value)=="string"&&value.indexOf("T")<0&&value.indexOf("Z")<0)
-                                        td.innerHTML= moment(value).format(datetimeFormat);
+                                        td.innerHTML= moment(value,datetimeFormat).format(datetimeFormat);
                                     //else if(typeof(value)=="string"&&value.indexOf("T")>=0&&value.indexOf("Z")==value.length-1)
                                     //    td.innerHTML= moment.parseZone(new Date(value)).utc().format(datetimeFormat);//OFF for DB MySQL
                                     else td.innerHTML= moment(value).format(datetimeFormat);
