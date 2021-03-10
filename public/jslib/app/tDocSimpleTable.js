@@ -62,7 +62,7 @@ define(["dojo/_base/declare", "dijit/layout/BorderContainer", "app/tDocsFunction
             setTopContent: function(){
                 if(this.parentPage&&this.parentPage.pageImageSmall&&this.topTableCellImageLogo){
                     this.topTableCellImageLogo.style["display"]="";
-                    this.topTableCellImageLogo.style["width"]="100px"; this.topTableCellImageLogo.style["height"]="40px";
+                    this.topTableCellImageLogo.style["width"]="145px"; this.topTableCellImageLogo.style["height"]="40px";
                     this.topTableCellImageLogo.style["background-repeat"]="no-repeat"; this.topTableCellImageLogo.style["background-position-x"]="center";
                     this.topTableCellImageLogo.style["background-image"]="url(\""+this.parentPage.pageImageSmall+"\")";
                 }else{

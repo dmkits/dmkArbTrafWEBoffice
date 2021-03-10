@@ -1,11 +1,17 @@
 {
-  "title":"Абсолют WEB-оффис","icon32x32":"icons/abswebof-ico-64.png","imageSmall":"imgs/abswebof-logo-108x54.png","imageMain":"imgs/abswebof-imageMain-664x373.png",
+  "title":"dmk ArbTraf WEB-office","icon32x32":"icons/target-64.png","imageSmall":"imgs/target-74x54.png","imageMain":"imgs/abswebof-imageMain-664x373.png",
   "modules":["sysadmin","system","main",
+    "doc_farmFB",
+    "doc_trafFB",
     "docxTemplates",
     "doc_xlsClients",
     "dir_xlsBusinessCardsRegions","dir_xlsBusinessCardsCities","dir_xlsBusinessCardsIndustries","doc_xlsBusinessCards"
   ],
   "menuItems":[
+    { "menuItemName":"menuBarItemDocFarmFB", "menuTitle":"FARM FB", "pageTitle":"FARM FB", "module":"doc_farmFB", "closable":true, "pageImageSmall":"imgs/fb-farm-transparent-142x48.png" },
+
+    { "menuItemName":"menuBarItemDocTrafFB", "menuTitle":"TRAFFIC FB", "pageTitle":"TRAFFIC FB", "module":"doc_trafFB", "closable":true, "pageImageSmall":"imgs/abswebof-logo-excel-86x48.png" },
+
     { "menuItemName":"menuBarItemDocXlsBusinessCards", "menuTitle":"База Визитки", "pageTitle":"База Визитки", "module":"doc_xlsBusinessCards", "closable":true, "pageImageSmall":"imgs/abswebof-logo-excel-86x48.png" },
     { "menuItemName":"menuBarItemDocXlsClients", "menuTitle":"База клиентов", "pageTitle":"База клиентов", "module":"doc_xlsClients", "closable":true, "pageImageSmall":"imgs/abswebof-logo-excel-86x48.png" },
     { "menuItemName":"menuBarItemDocDocxTemplatesMenu", "menuTitle":"Шаблоны документов Word", "pageTitle":"Шаблоны документов Word", "module":"docxTemplates", "closable":false, "pageImageSmall":"imgs/abswebof-logo-word-86x48.png" },
@@ -21,20 +27,29 @@
   ],
   "configDocxTemplates":"configDocxTemplates",
   "usersRoles":{
-    "docx":{
-      "menu":["menuBarItemDocDocxTemplatesMenu","menuBarItemHelpAbout","menuBarItemClose"]
-    },
-    "xls":{
-      "menu":["menuBarItemDocXlsBusinessCards","menuBarItemDocXlsClients",
+    "webmaster":{
+      "menu":[
+        "menuBarItemDocFarmFB","menuBarItemDocTrafFB",
+        "menuBarItemDocXlsBusinessCards","menuBarItemDocXlsClients",
         "menuBarItemDirsMenu","menuBarItemDirXlsBusinessCardsRegions","menuBarItemDirXlsBusinessCardsCities","menuBarItemDirXlsBusinessCardsIndustries",
         "menuBarItemHelpAbout","menuBarItemClose"
       ],
-      "autorun":["menuBarItemDocXlsBusinessCards"]
+      "autorun":["menuBarItemDocFarmFB","menuBarItemDocTrafFB"]
+    },
+    "farmer":{
+      "menu":["menuBarItemDocFarmFB","menuBarItemHelpAbout","menuBarItemClose"],
+      "autorun":["menuBarItemDocFarmFB"]
+    },
+    "buyer":{
+      "menu":["menuBarItemDocFarmFB","menuBarItemDocTrafFB","menuBarItemHelpAbout","menuBarItemClose"],
+      "autorun":["menuBarItemDocTrafFB"]
     }
   },
   "users":{
-    "asa":{ "name":"Сисадмин", "pswrd":"sysADM123", "sysadmin":true, "userRole":"sysadmin", "autorun":["menuBarItemDocXlsClientsMenu","menuBarItemDocXlsBusinessCards"] },
-    "docx":{ "name":"Пользователь шаблоны документов Word", "pswrd":"docx", "userRole":"docx" },
-    "xls":{ "name":"Пользователь база Excel", "pswrd":"xls", "userRole":"xls" }
+    "asa":{ "name":"Сисадмин", "pswrd":"sysADM123", "sysadmin":true, "userRole":"sysadmin", "autorun":["menuBarItemDocFarmFB"] },
+    "webmasterDMK":{ "name":"webmaster DMK", "pswrd":"dmkTrArb1202webmDMK", "userRole":"webmaster" },
+    "webmasterOE":{ "name":"webmaster OE", "pswrd":"dmkTrArb1202webmOE", "userRole":"webmaster" },
+    "farmerO":{ "name":"Farmer Olya E", "pswrd":"dmkTrafArb1202FARMoe", "userRole":"farmer" },
+    "buyer1":{ "name":"Buyer 1", "pswrd":"dmkTrafArb1202BUY1", "userRole":"buyer" }
   }
 }
