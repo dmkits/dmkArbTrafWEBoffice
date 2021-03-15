@@ -1,13 +1,13 @@
-<LayoutContainer id="dirDocFarmStates_PageContainer" style="width:100%;height:100%;margin:0px;padding:0;">
-    <StackContainer id="dirDocFarmStates_ContentContainer" region="center" tabPosition="top" style="width:100%;height:100%; margin:5px;padding:0;">
-        <TDocSimpleTableEdt id="dirDocFarmStates_TDocXlsBusinessCardsCities" style="margin:0;padding:0;"></TDocSimpleTableEdt>
+<LayoutContainer id="dirDocATFarmStates_PageContainer" style="width:100%;height:100%;margin:0px;padding:0;">
+    <StackContainer id="dirDocATFarmStates_ContentContainer" region="center" tabPosition="top" style="width:100%;height:100%; margin:5px;padding:0;">
+        <TDocSimpleTableEdt id="dirDocATFarmStates_TDocXlsBusinessCardsCities" style="margin:0;padding:0;"></TDocSimpleTableEdt>
     </StackContainer>
 </LayoutContainer>
 <script type="text/javascript">
-    $$.dirDocFarmStates_TDocXlsBusinessCardsCities
-            .init({titleText: "Справочник статусов фарма", dataURL:'/dirDocFarmStates/getDirDocFarmStatesDataForTable', buttonPrint:false,
+    $$.dirDocATFarmStates_TDocXlsBusinessCardsCities
+            .init({titleText: "Справочник статусов фарма", dataURL:'/dirDocATFarmStates/getDirDocATFarmStatesDataForTable', buttonPrint:false,
                 manualColumnResize:true, manualColumnMove:true, rightPane:{width:300},
-                dataStoreURL:"/dirDocFarmStates/storeDirDocFarmStatesTableData", dataDeleteURL:"/dirDocFarmStates/delDirDocFarmStatesTableData"
+                dataStoreURL:"/dirDocATFarmStates/storeDirDocATFarmStatesTableData", dataDeleteURL:"/dirDocATFarmStates/delDirDocATFarmStatesTableData"
             })
             .addTotalCountNumberBox("ИТОГО строк:", 140, {style:"font-weight:bold;",inputStyle:"width:40px;"})
             .addActionOnUpdateTableContent(function(paramsUpdateTableContent,htContent,htColumns,doc){
@@ -33,8 +33,8 @@
             .addContentTablePopupMenuTableRowsAction("Добавить строки",{actionName:"insertTableRowsAfterSelected"})
             .addContentTablePopupMenuTableRowsAction("Изменить строки",{actionName:"allowEditTableSelectedRows"})
             .addContentTablePopupMenuTableRowsAction("Сохранить строки",{actionName:"storeTableSelectedRows"});
-    $$.dirDocFarmStates_TDocXlsBusinessCardsCities.onShow= function(){
-        if(!$$.dirDocFarmStates_TDocXlsBusinessCardsCities.startedUp)$$.dirDocFarmStates_TDocXlsBusinessCardsCities.startupDoc();
+    $$.dirDocATFarmStates_TDocXlsBusinessCardsCities.onShow= function(){
+        if(!$$.dirDocATFarmStates_TDocXlsBusinessCardsCities.startedUp)$$.dirDocATFarmStates_TDocXlsBusinessCardsCities.startupDoc();
     };
-    $$.dirDocFarmStates_TDocXlsBusinessCardsCities.onShow();
+    $$.dirDocATFarmStates_TDocXlsBusinessCardsCities.onShow();
 </script>
